@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+message Location {
+    int32 latitude = 1;
+    int32 longitude = 2;
+    int32 speed = 3;
+    int32 altitude = 4;
+}
+
+message AccelerometerData {
+    int32 ax = 1;
+    int32 ay = 2;
+    int32 az = 3;
+}
+
+message GyroscopeData {
+    int32 gx = 1;
+    int32 gy = 2;
+    int32 gz = 3;
+}
+
+message MagnetometerData {
+    int32 mx = 1;
+    int32 my = 2;
+    int32 mz = 3;
+}
+
+message ClimateData {
+    int32 temperature = 1;
+    int32 humidity = 2;
+    int32 pressure = 3;
+}
+
+message SyncPacket {    
+    Location location = 1;
+    AccelerometerData accData = 2;
+    GyroscopeData gyroData = 3;
+    MagnetometerData magData = 4;
+    ClimateData climateData = 5;
+    int32 timestamp = 6;
+}
+    
+enum Status {
+    SUCCESS = 0;
+    FAILED = 1;
+}
+
+message RequestSummary {
+    string name = 1; 
+}
+
+message SyncResponse {
+    Status status = 1;
+    int32 insertedPackets = 2;
+}
+
+service SyncService {    
+
+    // Insert new packets
+    rpc SendTelemetry(stream SyncPacket) returns (SyncResponse){}
+    // Get last job summary
+    rpc GetLastJobSummary(RequestSummary) returns (SyncResponse){}
+
+}
