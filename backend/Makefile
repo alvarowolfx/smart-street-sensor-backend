@@ -9,7 +9,7 @@ run-grpc-test:
 	go test ./server -run=grpc.* -bench=. -benchmem -benchtime=5s
 
 run-http-test:
-	go test ./server -run=http.* -bench=. -benchmem -benchtime=5s ${ARGS}
+	go test ./server -run=http.* -bench=Http.* -benchmem -benchtime=5s
 
 build:
 	GOOS=linux go build -o app

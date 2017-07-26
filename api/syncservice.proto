@@ -2,44 +2,49 @@ syntax = "proto3";
 
 package api;
 
-message Location {
+message RegisterDeviceMessage{
+    string deviceId = 1; 
+    string token = 2;
+}
+
+message DeviceFilter {
+    int32 page = 1;
+    int32 perPage = 2;
+}
+
+message UpdateStatusMessage{
+    string deviceId = 1;
+    bool status = 2;
+}
+
+message LoginMessage {
+    string login = 1;
+    string password = 2;
+}
+
+message Metric{            
     int32 latitude = 1;
     int32 longitude = 2;
     int32 speed = 3;
     int32 altitude = 4;
-}
 
-message AccelerometerData {
-    int32 ax = 1;
-    int32 ay = 2;
-    int32 az = 3;
-}
+    int32 ax = 5;
+    int32 ay = 6;
+    int32 az = 7;
 
-message GyroscopeData {
-    int32 gx = 1;
-    int32 gy = 2;
-    int32 gz = 3;
-}
+    int32 gx = 8;
+    int32 gy = 9;
+    int32 gz = 10;
 
-message MagnetometerData {
-    int32 mx = 1;
-    int32 my = 2;
-    int32 mz = 3;
-}
+    int32 mx = 11;
+    int32 my = 12;
+    int32 mz = 13;
 
-message ClimateData {
-    int32 temperature = 1;
-    int32 humidity = 2;
-    int32 pressure = 3;
-}
+    int32 temperature = 14;
+    int32 humidity = 15;
+    int32 pressure = 16;
 
-message SyncPacket {    
-    Location location = 1;
-    AccelerometerData accData = 2;
-    GyroscopeData gyroData = 3;
-    MagnetometerData magData = 4;
-    ClimateData climateData = 5;
-    int32 timestamp = 6;
+    int32 timestamp = 17;
 }
     
 enum Status {
@@ -47,20 +52,54 @@ enum Status {
     FAILED = 1;
 }
 
-message RequestSummary {
-    string name = 1; 
-}
-
-message SyncResponse {
+message LoginResponse {
     Status status = 1;
-    int32 insertedPackets = 2;
+    string token = 2;
 }
 
-service SyncService {    
+message RegisterResponse {
+    Status status = 1;
+    string token = 2;
+}
 
+message MetricResponse {
+    Status status = 1;    
+    int32 insertedMetrics = 2;
+}
+
+message StatusResponse {
+    Status status = 1;
+    string message = 2;
+}
+
+message Device {
+    string deviceId = 1;
+    Metric lastMetric = 2;
+}
+
+message DeviceResponse {
+    Status status = 1;
+    int32 total = 2;
+    repeated Device devices = 3;
+}
+
+service AuthService {
+
+    // Register a device and return a token
+    rpc RegisterDevice(RegisterDeviceMessage) returns (RegisterResponse){}    
+    // Login user with password and return a token
+    rpc Login(LoginMessage) returns (LoginResponse){}    
+}
+
+service DeviceHandlingService {
+
+    // Enable and disable devices
+    rpc UpdateStatus(UpdateStatusMessage) returns (StatusResponse){}
+    rpc ListDevices(DeviceFilter) returns (DeviceResponse){}
+    
+}
+
+service MetricService {    
     // Insert new packets
-    rpc SendTelemetry(stream SyncPacket) returns (SyncResponse){}
-    // Get last job summary
-    rpc GetLastJobSummary(RequestSummary) returns (SyncResponse){}
-
+    rpc SendMetric(stream Metric) returns (MetricResponse){}    
 }

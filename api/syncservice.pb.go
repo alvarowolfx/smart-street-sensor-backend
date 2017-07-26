@@ -8,14 +8,17 @@ It is generated from these files:
 	syncservice.proto
 
 It has these top-level messages:
-	Location
-	AccelerometerData
-	GyroscopeData
-	MagnetometerData
-	ClimateData
-	SyncPacket
-	RequestSummary
-	SyncResponse
+	RegisterDeviceMessage
+	DeviceFilter
+	UpdateStatusMessage
+	LoginMessage
+	Metric
+	LoginResponse
+	RegisterResponse
+	MetricResponse
+	StatusResponse
+	Device
+	DeviceResponse
 */
 package api
 
@@ -60,279 +63,410 @@ func (x Status) String() string {
 }
 func (Status) EnumDescriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
 
-type Location struct {
-	Latitude  int32 `protobuf:"varint,1,opt,name=latitude" json:"latitude,omitempty"`
-	Longitude int32 `protobuf:"varint,2,opt,name=longitude" json:"longitude,omitempty"`
-	Speed     int32 `protobuf:"varint,3,opt,name=speed" json:"speed,omitempty"`
-	Altitude  int32 `protobuf:"varint,4,opt,name=altitude" json:"altitude,omitempty"`
+type RegisterDeviceMessage struct {
+	DeviceId string `protobuf:"bytes,1,opt,name=deviceId" json:"deviceId,omitempty"`
+	Token    string `protobuf:"bytes,2,opt,name=token" json:"token,omitempty"`
 }
 
-func (m *Location) Reset()                    { *m = Location{} }
-func (m *Location) String() string            { return proto.CompactTextString(m) }
-func (*Location) ProtoMessage()               {}
-func (*Location) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
+func (m *RegisterDeviceMessage) Reset()                    { *m = RegisterDeviceMessage{} }
+func (m *RegisterDeviceMessage) String() string            { return proto.CompactTextString(m) }
+func (*RegisterDeviceMessage) ProtoMessage()               {}
+func (*RegisterDeviceMessage) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
 
-func (m *Location) GetLatitude() int32 {
+func (m *RegisterDeviceMessage) GetDeviceId() string {
+	if m != nil {
+		return m.DeviceId
+	}
+	return ""
+}
+
+func (m *RegisterDeviceMessage) GetToken() string {
+	if m != nil {
+		return m.Token
+	}
+	return ""
+}
+
+type DeviceFilter struct {
+	Page    int32 `protobuf:"varint,1,opt,name=page" json:"page,omitempty"`
+	PerPage int32 `protobuf:"varint,2,opt,name=perPage" json:"perPage,omitempty"`
+}
+
+func (m *DeviceFilter) Reset()                    { *m = DeviceFilter{} }
+func (m *DeviceFilter) String() string            { return proto.CompactTextString(m) }
+func (*DeviceFilter) ProtoMessage()               {}
+func (*DeviceFilter) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
+
+func (m *DeviceFilter) GetPage() int32 {
+	if m != nil {
+		return m.Page
+	}
+	return 0
+}
+
+func (m *DeviceFilter) GetPerPage() int32 {
+	if m != nil {
+		return m.PerPage
+	}
+	return 0
+}
+
+type UpdateStatusMessage struct {
+	DeviceId string `protobuf:"bytes,1,opt,name=deviceId" json:"deviceId,omitempty"`
+	Status   bool   `protobuf:"varint,2,opt,name=status" json:"status,omitempty"`
+}
+
+func (m *UpdateStatusMessage) Reset()                    { *m = UpdateStatusMessage{} }
+func (m *UpdateStatusMessage) String() string            { return proto.CompactTextString(m) }
+func (*UpdateStatusMessage) ProtoMessage()               {}
+func (*UpdateStatusMessage) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{2} }
+
+func (m *UpdateStatusMessage) GetDeviceId() string {
+	if m != nil {
+		return m.DeviceId
+	}
+	return ""
+}
+
+func (m *UpdateStatusMessage) GetStatus() bool {
+	if m != nil {
+		return m.Status
+	}
+	return false
+}
+
+type LoginMessage struct {
+	Login    string `protobuf:"bytes,1,opt,name=login" json:"login,omitempty"`
+	Password string `protobuf:"bytes,2,opt,name=password" json:"password,omitempty"`
+}
+
+func (m *LoginMessage) Reset()                    { *m = LoginMessage{} }
+func (m *LoginMessage) String() string            { return proto.CompactTextString(m) }
+func (*LoginMessage) ProtoMessage()               {}
+func (*LoginMessage) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{3} }
+
+func (m *LoginMessage) GetLogin() string {
+	if m != nil {
+		return m.Login
+	}
+	return ""
+}
+
+func (m *LoginMessage) GetPassword() string {
+	if m != nil {
+		return m.Password
+	}
+	return ""
+}
+
+type Metric struct {
+	Latitude    int32 `protobuf:"varint,1,opt,name=latitude" json:"latitude,omitempty"`
+	Longitude   int32 `protobuf:"varint,2,opt,name=longitude" json:"longitude,omitempty"`
+	Speed       int32 `protobuf:"varint,3,opt,name=speed" json:"speed,omitempty"`
+	Altitude    int32 `protobuf:"varint,4,opt,name=altitude" json:"altitude,omitempty"`
+	Ax          int32 `protobuf:"varint,5,opt,name=ax" json:"ax,omitempty"`
+	Ay          int32 `protobuf:"varint,6,opt,name=ay" json:"ay,omitempty"`
+	Az          int32 `protobuf:"varint,7,opt,name=az" json:"az,omitempty"`
+	Gx          int32 `protobuf:"varint,8,opt,name=gx" json:"gx,omitempty"`
+	Gy          int32 `protobuf:"varint,9,opt,name=gy" json:"gy,omitempty"`
+	Gz          int32 `protobuf:"varint,10,opt,name=gz" json:"gz,omitempty"`
+	Mx          int32 `protobuf:"varint,11,opt,name=mx" json:"mx,omitempty"`
+	My          int32 `protobuf:"varint,12,opt,name=my" json:"my,omitempty"`
+	Mz          int32 `protobuf:"varint,13,opt,name=mz" json:"mz,omitempty"`
+	Temperature int32 `protobuf:"varint,14,opt,name=temperature" json:"temperature,omitempty"`
+	Humidity    int32 `protobuf:"varint,15,opt,name=humidity" json:"humidity,omitempty"`
+	Pressure    int32 `protobuf:"varint,16,opt,name=pressure" json:"pressure,omitempty"`
+	Timestamp   int32 `protobuf:"varint,17,opt,name=timestamp" json:"timestamp,omitempty"`
+}
+
+func (m *Metric) Reset()                    { *m = Metric{} }
+func (m *Metric) String() string            { return proto.CompactTextString(m) }
+func (*Metric) ProtoMessage()               {}
+func (*Metric) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{4} }
+
+func (m *Metric) GetLatitude() int32 {
 	if m != nil {
 		return m.Latitude
 	}
 	return 0
 }
 
-func (m *Location) GetLongitude() int32 {
+func (m *Metric) GetLongitude() int32 {
 	if m != nil {
 		return m.Longitude
 	}
 	return 0
 }
 
-func (m *Location) GetSpeed() int32 {
+func (m *Metric) GetSpeed() int32 {
 	if m != nil {
 		return m.Speed
 	}
 	return 0
 }
 
-func (m *Location) GetAltitude() int32 {
+func (m *Metric) GetAltitude() int32 {
 	if m != nil {
 		return m.Altitude
 	}
 	return 0
 }
 
-type AccelerometerData struct {
-	Ax int32 `protobuf:"varint,1,opt,name=ax" json:"ax,omitempty"`
-	Ay int32 `protobuf:"varint,2,opt,name=ay" json:"ay,omitempty"`
-	Az int32 `protobuf:"varint,3,opt,name=az" json:"az,omitempty"`
-}
-
-func (m *AccelerometerData) Reset()                    { *m = AccelerometerData{} }
-func (m *AccelerometerData) String() string            { return proto.CompactTextString(m) }
-func (*AccelerometerData) ProtoMessage()               {}
-func (*AccelerometerData) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
-
-func (m *AccelerometerData) GetAx() int32 {
+func (m *Metric) GetAx() int32 {
 	if m != nil {
 		return m.Ax
 	}
 	return 0
 }
 
-func (m *AccelerometerData) GetAy() int32 {
+func (m *Metric) GetAy() int32 {
 	if m != nil {
 		return m.Ay
 	}
 	return 0
 }
 
-func (m *AccelerometerData) GetAz() int32 {
+func (m *Metric) GetAz() int32 {
 	if m != nil {
 		return m.Az
 	}
 	return 0
 }
 
-type GyroscopeData struct {
-	Gx int32 `protobuf:"varint,1,opt,name=gx" json:"gx,omitempty"`
-	Gy int32 `protobuf:"varint,2,opt,name=gy" json:"gy,omitempty"`
-	Gz int32 `protobuf:"varint,3,opt,name=gz" json:"gz,omitempty"`
-}
-
-func (m *GyroscopeData) Reset()                    { *m = GyroscopeData{} }
-func (m *GyroscopeData) String() string            { return proto.CompactTextString(m) }
-func (*GyroscopeData) ProtoMessage()               {}
-func (*GyroscopeData) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{2} }
-
-func (m *GyroscopeData) GetGx() int32 {
+func (m *Metric) GetGx() int32 {
 	if m != nil {
 		return m.Gx
 	}
 	return 0
 }
 
-func (m *GyroscopeData) GetGy() int32 {
+func (m *Metric) GetGy() int32 {
 	if m != nil {
 		return m.Gy
 	}
 	return 0
 }
 
-func (m *GyroscopeData) GetGz() int32 {
+func (m *Metric) GetGz() int32 {
 	if m != nil {
 		return m.Gz
 	}
 	return 0
 }
 
-type MagnetometerData struct {
-	Mx int32 `protobuf:"varint,1,opt,name=mx" json:"mx,omitempty"`
-	My int32 `protobuf:"varint,2,opt,name=my" json:"my,omitempty"`
-	Mz int32 `protobuf:"varint,3,opt,name=mz" json:"mz,omitempty"`
-}
-
-func (m *MagnetometerData) Reset()                    { *m = MagnetometerData{} }
-func (m *MagnetometerData) String() string            { return proto.CompactTextString(m) }
-func (*MagnetometerData) ProtoMessage()               {}
-func (*MagnetometerData) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{3} }
-
-func (m *MagnetometerData) GetMx() int32 {
+func (m *Metric) GetMx() int32 {
 	if m != nil {
 		return m.Mx
 	}
 	return 0
 }
 
-func (m *MagnetometerData) GetMy() int32 {
+func (m *Metric) GetMy() int32 {
 	if m != nil {
 		return m.My
 	}
 	return 0
 }
 
-func (m *MagnetometerData) GetMz() int32 {
+func (m *Metric) GetMz() int32 {
 	if m != nil {
 		return m.Mz
 	}
 	return 0
 }
 
-type ClimateData struct {
-	Temperature int32 `protobuf:"varint,1,opt,name=temperature" json:"temperature,omitempty"`
-	Humidity    int32 `protobuf:"varint,2,opt,name=humidity" json:"humidity,omitempty"`
-	Pressure    int32 `protobuf:"varint,3,opt,name=pressure" json:"pressure,omitempty"`
-}
-
-func (m *ClimateData) Reset()                    { *m = ClimateData{} }
-func (m *ClimateData) String() string            { return proto.CompactTextString(m) }
-func (*ClimateData) ProtoMessage()               {}
-func (*ClimateData) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{4} }
-
-func (m *ClimateData) GetTemperature() int32 {
+func (m *Metric) GetTemperature() int32 {
 	if m != nil {
 		return m.Temperature
 	}
 	return 0
 }
 
-func (m *ClimateData) GetHumidity() int32 {
+func (m *Metric) GetHumidity() int32 {
 	if m != nil {
 		return m.Humidity
 	}
 	return 0
 }
 
-func (m *ClimateData) GetPressure() int32 {
+func (m *Metric) GetPressure() int32 {
 	if m != nil {
 		return m.Pressure
 	}
 	return 0
 }
 
-type SyncPacket struct {
-	Location    *Location          `protobuf:"bytes,1,opt,name=location" json:"location,omitempty"`
-	AccData     *AccelerometerData `protobuf:"bytes,2,opt,name=accData" json:"accData,omitempty"`
-	GyroData    *GyroscopeData     `protobuf:"bytes,3,opt,name=gyroData" json:"gyroData,omitempty"`
-	MagData     *MagnetometerData  `protobuf:"bytes,4,opt,name=magData" json:"magData,omitempty"`
-	ClimateData *ClimateData       `protobuf:"bytes,5,opt,name=climateData" json:"climateData,omitempty"`
-	Timestamp   int32              `protobuf:"varint,6,opt,name=timestamp" json:"timestamp,omitempty"`
-}
-
-func (m *SyncPacket) Reset()                    { *m = SyncPacket{} }
-func (m *SyncPacket) String() string            { return proto.CompactTextString(m) }
-func (*SyncPacket) ProtoMessage()               {}
-func (*SyncPacket) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{5} }
-
-func (m *SyncPacket) GetLocation() *Location {
-	if m != nil {
-		return m.Location
-	}
-	return nil
-}
-
-func (m *SyncPacket) GetAccData() *AccelerometerData {
-	if m != nil {
-		return m.AccData
-	}
-	return nil
-}
-
-func (m *SyncPacket) GetGyroData() *GyroscopeData {
-	if m != nil {
-		return m.GyroData
-	}
-	return nil
-}
-
-func (m *SyncPacket) GetMagData() *MagnetometerData {
-	if m != nil {
-		return m.MagData
-	}
-	return nil
-}
-
-func (m *SyncPacket) GetClimateData() *ClimateData {
-	if m != nil {
-		return m.ClimateData
-	}
-	return nil
-}
-
-func (m *SyncPacket) GetTimestamp() int32 {
+func (m *Metric) GetTimestamp() int32 {
 	if m != nil {
 		return m.Timestamp
 	}
 	return 0
 }
 
-type RequestSummary struct {
-	Name string `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+type LoginResponse struct {
+	Status Status `protobuf:"varint,1,opt,name=status,enum=api.Status" json:"status,omitempty"`
+	Token  string `protobuf:"bytes,2,opt,name=token" json:"token,omitempty"`
 }
 
-func (m *RequestSummary) Reset()                    { *m = RequestSummary{} }
-func (m *RequestSummary) String() string            { return proto.CompactTextString(m) }
-func (*RequestSummary) ProtoMessage()               {}
-func (*RequestSummary) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{6} }
+func (m *LoginResponse) Reset()                    { *m = LoginResponse{} }
+func (m *LoginResponse) String() string            { return proto.CompactTextString(m) }
+func (*LoginResponse) ProtoMessage()               {}
+func (*LoginResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{5} }
 
-func (m *RequestSummary) GetName() string {
-	if m != nil {
-		return m.Name
-	}
-	return ""
-}
-
-type SyncResponse struct {
-	Status          Status `protobuf:"varint,1,opt,name=status,enum=api.Status" json:"status,omitempty"`
-	InsertedPackets int32  `protobuf:"varint,2,opt,name=insertedPackets" json:"insertedPackets,omitempty"`
-}
-
-func (m *SyncResponse) Reset()                    { *m = SyncResponse{} }
-func (m *SyncResponse) String() string            { return proto.CompactTextString(m) }
-func (*SyncResponse) ProtoMessage()               {}
-func (*SyncResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{7} }
-
-func (m *SyncResponse) GetStatus() Status {
+func (m *LoginResponse) GetStatus() Status {
 	if m != nil {
 		return m.Status
 	}
 	return Status_SUCCESS
 }
 
-func (m *SyncResponse) GetInsertedPackets() int32 {
+func (m *LoginResponse) GetToken() string {
 	if m != nil {
-		return m.InsertedPackets
+		return m.Token
+	}
+	return ""
+}
+
+type RegisterResponse struct {
+	Status Status `protobuf:"varint,1,opt,name=status,enum=api.Status" json:"status,omitempty"`
+	Token  string `protobuf:"bytes,2,opt,name=token" json:"token,omitempty"`
+}
+
+func (m *RegisterResponse) Reset()                    { *m = RegisterResponse{} }
+func (m *RegisterResponse) String() string            { return proto.CompactTextString(m) }
+func (*RegisterResponse) ProtoMessage()               {}
+func (*RegisterResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{6} }
+
+func (m *RegisterResponse) GetStatus() Status {
+	if m != nil {
+		return m.Status
+	}
+	return Status_SUCCESS
+}
+
+func (m *RegisterResponse) GetToken() string {
+	if m != nil {
+		return m.Token
+	}
+	return ""
+}
+
+type MetricResponse struct {
+	Status          Status `protobuf:"varint,1,opt,name=status,enum=api.Status" json:"status,omitempty"`
+	InsertedMetrics int32  `protobuf:"varint,2,opt,name=insertedMetrics" json:"insertedMetrics,omitempty"`
+}
+
+func (m *MetricResponse) Reset()                    { *m = MetricResponse{} }
+func (m *MetricResponse) String() string            { return proto.CompactTextString(m) }
+func (*MetricResponse) ProtoMessage()               {}
+func (*MetricResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{7} }
+
+func (m *MetricResponse) GetStatus() Status {
+	if m != nil {
+		return m.Status
+	}
+	return Status_SUCCESS
+}
+
+func (m *MetricResponse) GetInsertedMetrics() int32 {
+	if m != nil {
+		return m.InsertedMetrics
 	}
 	return 0
 }
 
+type StatusResponse struct {
+	Status  Status `protobuf:"varint,1,opt,name=status,enum=api.Status" json:"status,omitempty"`
+	Message string `protobuf:"bytes,2,opt,name=message" json:"message,omitempty"`
+}
+
+func (m *StatusResponse) Reset()                    { *m = StatusResponse{} }
+func (m *StatusResponse) String() string            { return proto.CompactTextString(m) }
+func (*StatusResponse) ProtoMessage()               {}
+func (*StatusResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{8} }
+
+func (m *StatusResponse) GetStatus() Status {
+	if m != nil {
+		return m.Status
+	}
+	return Status_SUCCESS
+}
+
+func (m *StatusResponse) GetMessage() string {
+	if m != nil {
+		return m.Message
+	}
+	return ""
+}
+
+type Device struct {
+	DeviceId   string  `protobuf:"bytes,1,opt,name=deviceId" json:"deviceId,omitempty"`
+	LastMetric *Metric `protobuf:"bytes,2,opt,name=lastMetric" json:"lastMetric,omitempty"`
+}
+
+func (m *Device) Reset()                    { *m = Device{} }
+func (m *Device) String() string            { return proto.CompactTextString(m) }
+func (*Device) ProtoMessage()               {}
+func (*Device) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{9} }
+
+func (m *Device) GetDeviceId() string {
+	if m != nil {
+		return m.DeviceId
+	}
+	return ""
+}
+
+func (m *Device) GetLastMetric() *Metric {
+	if m != nil {
+		return m.LastMetric
+	}
+	return nil
+}
+
+type DeviceResponse struct {
+	Status  Status    `protobuf:"varint,1,opt,name=status,enum=api.Status" json:"status,omitempty"`
+	Total   int32     `protobuf:"varint,2,opt,name=total" json:"total,omitempty"`
+	Devices []*Device `protobuf:"bytes,3,rep,name=devices" json:"devices,omitempty"`
+}
+
+func (m *DeviceResponse) Reset()                    { *m = DeviceResponse{} }
+func (m *DeviceResponse) String() string            { return proto.CompactTextString(m) }
+func (*DeviceResponse) ProtoMessage()               {}
+func (*DeviceResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{10} }
+
+func (m *DeviceResponse) GetStatus() Status {
+	if m != nil {
+		return m.Status
+	}
+	return Status_SUCCESS
+}
+
+func (m *DeviceResponse) GetTotal() int32 {
+	if m != nil {
+		return m.Total
+	}
+	return 0
+}
+
+func (m *DeviceResponse) GetDevices() []*Device {
+	if m != nil {
+		return m.Devices
+	}
+	return nil
+}
+
 func init() {
-	proto.RegisterType((*Location)(nil), "api.Location")
-	proto.RegisterType((*AccelerometerData)(nil), "api.AccelerometerData")
-	proto.RegisterType((*GyroscopeData)(nil), "api.GyroscopeData")
-	proto.RegisterType((*MagnetometerData)(nil), "api.MagnetometerData")
-	proto.RegisterType((*ClimateData)(nil), "api.ClimateData")
-	proto.RegisterType((*SyncPacket)(nil), "api.SyncPacket")
-	proto.RegisterType((*RequestSummary)(nil), "api.RequestSummary")
-	proto.RegisterType((*SyncResponse)(nil), "api.SyncResponse")
+	proto.RegisterType((*RegisterDeviceMessage)(nil), "api.RegisterDeviceMessage")
+	proto.RegisterType((*DeviceFilter)(nil), "api.DeviceFilter")
+	proto.RegisterType((*UpdateStatusMessage)(nil), "api.UpdateStatusMessage")
+	proto.RegisterType((*LoginMessage)(nil), "api.LoginMessage")
+	proto.RegisterType((*Metric)(nil), "api.Metric")
+	proto.RegisterType((*LoginResponse)(nil), "api.LoginResponse")
+	proto.RegisterType((*RegisterResponse)(nil), "api.RegisterResponse")
+	proto.RegisterType((*MetricResponse)(nil), "api.MetricResponse")
+	proto.RegisterType((*StatusResponse)(nil), "api.StatusResponse")
+	proto.RegisterType((*Device)(nil), "api.Device")
+	proto.RegisterType((*DeviceResponse)(nil), "api.DeviceResponse")
 	proto.RegisterEnum("api.Status", Status_name, Status_value)
 }
 
@@ -344,179 +478,351 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// Client API for SyncService service
+// Client API for AuthService service
 
-type SyncServiceClient interface {
-	// Insert new packets
-	SendTelemetry(ctx context.Context, opts ...grpc.CallOption) (SyncService_SendTelemetryClient, error)
-	// Get last job summary
-	GetLastJobSummary(ctx context.Context, in *RequestSummary, opts ...grpc.CallOption) (*SyncResponse, error)
+type AuthServiceClient interface {
+	// Register a device and return a token
+	RegisterDevice(ctx context.Context, in *RegisterDeviceMessage, opts ...grpc.CallOption) (*RegisterResponse, error)
+	// Login user with password and return a token
+	Login(ctx context.Context, in *LoginMessage, opts ...grpc.CallOption) (*LoginResponse, error)
 }
 
-type syncServiceClient struct {
+type authServiceClient struct {
 	cc *grpc.ClientConn
 }
 
-func NewSyncServiceClient(cc *grpc.ClientConn) SyncServiceClient {
-	return &syncServiceClient{cc}
+func NewAuthServiceClient(cc *grpc.ClientConn) AuthServiceClient {
+	return &authServiceClient{cc}
 }
 
-func (c *syncServiceClient) SendTelemetry(ctx context.Context, opts ...grpc.CallOption) (SyncService_SendTelemetryClient, error) {
-	stream, err := grpc.NewClientStream(ctx, &_SyncService_serviceDesc.Streams[0], c.cc, "/api.SyncService/SendTelemetry", opts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &syncServiceSendTelemetryClient{stream}
-	return x, nil
-}
-
-type SyncService_SendTelemetryClient interface {
-	Send(*SyncPacket) error
-	CloseAndRecv() (*SyncResponse, error)
-	grpc.ClientStream
-}
-
-type syncServiceSendTelemetryClient struct {
-	grpc.ClientStream
-}
-
-func (x *syncServiceSendTelemetryClient) Send(m *SyncPacket) error {
-	return x.ClientStream.SendMsg(m)
-}
-
-func (x *syncServiceSendTelemetryClient) CloseAndRecv() (*SyncResponse, error) {
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	m := new(SyncResponse)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-func (c *syncServiceClient) GetLastJobSummary(ctx context.Context, in *RequestSummary, opts ...grpc.CallOption) (*SyncResponse, error) {
-	out := new(SyncResponse)
-	err := grpc.Invoke(ctx, "/api.SyncService/GetLastJobSummary", in, out, c.cc, opts...)
+func (c *authServiceClient) RegisterDevice(ctx context.Context, in *RegisterDeviceMessage, opts ...grpc.CallOption) (*RegisterResponse, error) {
+	out := new(RegisterResponse)
+	err := grpc.Invoke(ctx, "/api.AuthService/RegisterDevice", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// Server API for SyncService service
+func (c *authServiceClient) Login(ctx context.Context, in *LoginMessage, opts ...grpc.CallOption) (*LoginResponse, error) {
+	out := new(LoginResponse)
+	err := grpc.Invoke(ctx, "/api.AuthService/Login", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
 
-type SyncServiceServer interface {
+// Server API for AuthService service
+
+type AuthServiceServer interface {
+	// Register a device and return a token
+	RegisterDevice(context.Context, *RegisterDeviceMessage) (*RegisterResponse, error)
+	// Login user with password and return a token
+	Login(context.Context, *LoginMessage) (*LoginResponse, error)
+}
+
+func RegisterAuthServiceServer(s *grpc.Server, srv AuthServiceServer) {
+	s.RegisterService(&_AuthService_serviceDesc, srv)
+}
+
+func _AuthService_RegisterDevice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RegisterDeviceMessage)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).RegisterDevice(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.AuthService/RegisterDevice",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).RegisterDevice(ctx, req.(*RegisterDeviceMessage))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthService_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoginMessage)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).Login(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.AuthService/Login",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).Login(ctx, req.(*LoginMessage))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _AuthService_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "api.AuthService",
+	HandlerType: (*AuthServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "RegisterDevice",
+			Handler:    _AuthService_RegisterDevice_Handler,
+		},
+		{
+			MethodName: "Login",
+			Handler:    _AuthService_Login_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "syncservice.proto",
+}
+
+// Client API for DeviceHandlingService service
+
+type DeviceHandlingServiceClient interface {
+	// Enable and disable devices
+	UpdateStatus(ctx context.Context, in *UpdateStatusMessage, opts ...grpc.CallOption) (*StatusResponse, error)
+	ListDevices(ctx context.Context, in *DeviceFilter, opts ...grpc.CallOption) (*DeviceResponse, error)
+}
+
+type deviceHandlingServiceClient struct {
+	cc *grpc.ClientConn
+}
+
+func NewDeviceHandlingServiceClient(cc *grpc.ClientConn) DeviceHandlingServiceClient {
+	return &deviceHandlingServiceClient{cc}
+}
+
+func (c *deviceHandlingServiceClient) UpdateStatus(ctx context.Context, in *UpdateStatusMessage, opts ...grpc.CallOption) (*StatusResponse, error) {
+	out := new(StatusResponse)
+	err := grpc.Invoke(ctx, "/api.DeviceHandlingService/UpdateStatus", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *deviceHandlingServiceClient) ListDevices(ctx context.Context, in *DeviceFilter, opts ...grpc.CallOption) (*DeviceResponse, error) {
+	out := new(DeviceResponse)
+	err := grpc.Invoke(ctx, "/api.DeviceHandlingService/ListDevices", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Server API for DeviceHandlingService service
+
+type DeviceHandlingServiceServer interface {
+	// Enable and disable devices
+	UpdateStatus(context.Context, *UpdateStatusMessage) (*StatusResponse, error)
+	ListDevices(context.Context, *DeviceFilter) (*DeviceResponse, error)
+}
+
+func RegisterDeviceHandlingServiceServer(s *grpc.Server, srv DeviceHandlingServiceServer) {
+	s.RegisterService(&_DeviceHandlingService_serviceDesc, srv)
+}
+
+func _DeviceHandlingService_UpdateStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateStatusMessage)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DeviceHandlingServiceServer).UpdateStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.DeviceHandlingService/UpdateStatus",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DeviceHandlingServiceServer).UpdateStatus(ctx, req.(*UpdateStatusMessage))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DeviceHandlingService_ListDevices_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeviceFilter)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DeviceHandlingServiceServer).ListDevices(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.DeviceHandlingService/ListDevices",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DeviceHandlingServiceServer).ListDevices(ctx, req.(*DeviceFilter))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _DeviceHandlingService_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "api.DeviceHandlingService",
+	HandlerType: (*DeviceHandlingServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "UpdateStatus",
+			Handler:    _DeviceHandlingService_UpdateStatus_Handler,
+		},
+		{
+			MethodName: "ListDevices",
+			Handler:    _DeviceHandlingService_ListDevices_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "syncservice.proto",
+}
+
+// Client API for MetricService service
+
+type MetricServiceClient interface {
 	// Insert new packets
-	SendTelemetry(SyncService_SendTelemetryServer) error
-	// Get last job summary
-	GetLastJobSummary(context.Context, *RequestSummary) (*SyncResponse, error)
+	SendMetric(ctx context.Context, opts ...grpc.CallOption) (MetricService_SendMetricClient, error)
 }
 
-func RegisterSyncServiceServer(s *grpc.Server, srv SyncServiceServer) {
-	s.RegisterService(&_SyncService_serviceDesc, srv)
+type metricServiceClient struct {
+	cc *grpc.ClientConn
 }
 
-func _SyncService_SendTelemetry_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(SyncServiceServer).SendTelemetry(&syncServiceSendTelemetryServer{stream})
+func NewMetricServiceClient(cc *grpc.ClientConn) MetricServiceClient {
+	return &metricServiceClient{cc}
 }
 
-type SyncService_SendTelemetryServer interface {
-	SendAndClose(*SyncResponse) error
-	Recv() (*SyncPacket, error)
+func (c *metricServiceClient) SendMetric(ctx context.Context, opts ...grpc.CallOption) (MetricService_SendMetricClient, error) {
+	stream, err := grpc.NewClientStream(ctx, &_MetricService_serviceDesc.Streams[0], c.cc, "/api.MetricService/SendMetric", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &metricServiceSendMetricClient{stream}
+	return x, nil
+}
+
+type MetricService_SendMetricClient interface {
+	Send(*Metric) error
+	CloseAndRecv() (*MetricResponse, error)
+	grpc.ClientStream
+}
+
+type metricServiceSendMetricClient struct {
+	grpc.ClientStream
+}
+
+func (x *metricServiceSendMetricClient) Send(m *Metric) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *metricServiceSendMetricClient) CloseAndRecv() (*MetricResponse, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(MetricResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// Server API for MetricService service
+
+type MetricServiceServer interface {
+	// Insert new packets
+	SendMetric(MetricService_SendMetricServer) error
+}
+
+func RegisterMetricServiceServer(s *grpc.Server, srv MetricServiceServer) {
+	s.RegisterService(&_MetricService_serviceDesc, srv)
+}
+
+func _MetricService_SendMetric_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(MetricServiceServer).SendMetric(&metricServiceSendMetricServer{stream})
+}
+
+type MetricService_SendMetricServer interface {
+	SendAndClose(*MetricResponse) error
+	Recv() (*Metric, error)
 	grpc.ServerStream
 }
 
-type syncServiceSendTelemetryServer struct {
+type metricServiceSendMetricServer struct {
 	grpc.ServerStream
 }
 
-func (x *syncServiceSendTelemetryServer) SendAndClose(m *SyncResponse) error {
+func (x *metricServiceSendMetricServer) SendAndClose(m *MetricResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *syncServiceSendTelemetryServer) Recv() (*SyncPacket, error) {
-	m := new(SyncPacket)
+func (x *metricServiceSendMetricServer) Recv() (*Metric, error) {
+	m := new(Metric)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
 	return m, nil
 }
 
-func _SyncService_GetLastJobSummary_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RequestSummary)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SyncServiceServer).GetLastJobSummary(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/api.SyncService/GetLastJobSummary",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SyncServiceServer).GetLastJobSummary(ctx, req.(*RequestSummary))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-var _SyncService_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "api.SyncService",
-	HandlerType: (*SyncServiceServer)(nil),
-	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "GetLastJobSummary",
-			Handler:    _SyncService_GetLastJobSummary_Handler,
-		},
-	},
+var _MetricService_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "api.MetricService",
+	HandlerType: (*MetricServiceServer)(nil),
+	Methods:     []grpc.MethodDesc{},
 	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "SendTelemetry",
-			Handler:       _SyncService_SendTelemetry_Handler,
+			StreamName:    "SendMetric",
+			Handler:       _MetricService_SendMetric_Handler,
 			ClientStreams: true,
 		},
 	},
 	Metadata: "syncservice.proto",
 }
+var MetricService_serviceDesc = _MetricService_serviceDesc
 
 func init() { proto.RegisterFile("syncservice.proto", fileDescriptor0) }
 
 var fileDescriptor0 = []byte{
-	// 548 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x6c, 0x94, 0x4d, 0x6f, 0xd3, 0x40,
-	0x10, 0x86, 0x1b, 0x37, 0x5f, 0x1d, 0x93, 0x34, 0x59, 0x3e, 0x14, 0x55, 0x1c, 0x8a, 0xe1, 0x10,
-	0x38, 0x04, 0x14, 0x0e, 0x9c, 0x10, 0x2a, 0x69, 0xa9, 0x40, 0x41, 0x42, 0x36, 0x1c, 0x39, 0x4c,
-	0x9d, 0x91, 0xb1, 0xf0, 0xda, 0x66, 0x77, 0x5d, 0xd5, 0xb9, 0xf3, 0x2f, 0xf8, 0xb1, 0xc8, 0x63,
-	0x7b, 0x9b, 0x14, 0x6e, 0x99, 0x99, 0x77, 0x9e, 0x99, 0xbc, 0xb3, 0x09, 0x4c, 0x75, 0x99, 0x86,
-	0x9a, 0xd4, 0x75, 0x1c, 0xd2, 0x22, 0x57, 0x99, 0xc9, 0xc4, 0x21, 0xe6, 0xb1, 0x77, 0x0d, 0xc3,
-	0x75, 0x16, 0xa2, 0x89, 0xb3, 0x54, 0x9c, 0xc0, 0x30, 0x41, 0x13, 0x9b, 0x62, 0x43, 0xb3, 0xce,
-	0x69, 0x67, 0xde, 0xf3, 0x6d, 0x2c, 0x1e, 0xc3, 0x51, 0x92, 0xa5, 0x51, 0x5d, 0x74, 0xb8, 0x78,
-	0x9b, 0x10, 0x0f, 0xa0, 0xa7, 0x73, 0xa2, 0xcd, 0xec, 0x90, 0x2b, 0x75, 0x50, 0xf1, 0x30, 0x69,
-	0x78, 0xdd, 0x9a, 0xd7, 0xc6, 0xde, 0x0a, 0xa6, 0x67, 0x61, 0x48, 0x09, 0xa9, 0x4c, 0x92, 0x21,
-	0x75, 0x8e, 0x06, 0xc5, 0x18, 0x1c, 0xbc, 0x69, 0x46, 0x3b, 0x78, 0xc3, 0x71, 0xd9, 0x4c, 0x73,
-	0xb0, 0xe4, 0x78, 0xdb, 0xcc, 0x70, 0x70, 0xeb, 0xbd, 0x83, 0xd1, 0x65, 0xa9, 0x32, 0x1d, 0x66,
-	0x39, 0xb5, 0x80, 0xc8, 0x02, 0x22, 0x06, 0x44, 0x16, 0x10, 0x31, 0x20, 0xb2, 0x80, 0x68, 0xeb,
-	0xbd, 0x87, 0xc9, 0x67, 0x8c, 0x52, 0x32, 0xfb, 0x4b, 0x48, 0xcb, 0x90, 0xcc, 0x90, 0x96, 0x21,
-	0x99, 0x21, 0x2d, 0x43, 0x6e, 0xbd, 0x08, 0xdc, 0x55, 0x12, 0x4b, 0x34, 0xf5, 0x0a, 0xa7, 0xe0,
-	0x1a, 0x92, 0x39, 0x29, 0x34, 0x85, 0x6a, 0x7d, 0xdc, 0x4d, 0x55, 0xb6, 0xfc, 0x28, 0x64, 0xbc,
-	0x89, 0x4d, 0x8b, 0xb5, 0x71, 0x55, 0xcb, 0x15, 0x69, 0x5d, 0xb5, 0xd6, 0x23, 0x6c, 0xec, 0xfd,
-	0x71, 0x00, 0x82, 0x32, 0x0d, 0xbf, 0x60, 0xf8, 0x93, 0x8c, 0x78, 0x0e, 0xc3, 0xa4, 0xb9, 0x1c,
-	0x4f, 0x71, 0x97, 0xa3, 0x05, 0xe6, 0xf1, 0xa2, 0x3d, 0xa7, 0x6f, 0xcb, 0xe2, 0x15, 0x0c, 0x30,
-	0x0c, 0xab, 0xf5, 0x78, 0xa0, 0xbb, 0x7c, 0xc4, 0xca, 0x7f, 0x0e, 0xe0, 0xb7, 0x32, 0xb1, 0x80,
-	0x61, 0x54, 0xaa, 0x8c, 0x5b, 0x0e, 0xb9, 0x45, 0x70, 0xcb, 0x9e, 0xdd, 0xbe, 0xd5, 0x88, 0x97,
-	0x30, 0x90, 0x18, 0xb1, 0xbc, 0xcb, 0xf2, 0x87, 0x2c, 0xbf, 0x6b, 0xae, 0xdf, 0xaa, 0xc4, 0x12,
-	0xdc, 0xf0, 0xd6, 0xb5, 0x59, 0x8f, 0x9b, 0x26, 0xdc, 0xb4, 0xe3, 0xa6, 0xbf, 0x2b, 0xaa, 0xde,
-	0xa0, 0x89, 0x25, 0x69, 0x83, 0x32, 0x9f, 0xf5, 0xeb, 0x37, 0x68, 0x13, 0xde, 0x33, 0x18, 0xfb,
-	0xf4, 0xab, 0x20, 0x6d, 0x82, 0x42, 0x4a, 0x54, 0xa5, 0x10, 0xd0, 0x4d, 0x51, 0xd6, 0x37, 0x38,
-	0xf2, 0xf9, 0xb3, 0xf7, 0x1d, 0xee, 0x55, 0x1e, 0xfa, 0xa4, 0xf3, 0x2c, 0xd5, 0x24, 0x9e, 0x42,
-	0x5f, 0x1b, 0x34, 0x85, 0x66, 0xd5, 0x78, 0xe9, 0xf2, 0x0a, 0x01, 0xa7, 0xfc, 0xa6, 0x24, 0xe6,
-	0x70, 0x1c, 0xa7, 0x9a, 0x94, 0xa1, 0x4d, 0x6d, 0xbe, 0x6e, 0x0e, 0x77, 0x37, 0xfd, 0xe2, 0x09,
-	0xf4, 0xeb, 0x5e, 0xe1, 0xc2, 0x20, 0xf8, 0xb6, 0x5a, 0x5d, 0x04, 0xc1, 0xe4, 0x40, 0x00, 0xf4,
-	0x3f, 0x9c, 0x7d, 0x5c, 0x5f, 0x9c, 0x4f, 0x3a, 0xcb, 0xdf, 0x1d, 0x70, 0xab, 0x15, 0x82, 0xfa,
-	0xc7, 0x28, 0xde, 0xc0, 0x28, 0xa0, 0x74, 0xf3, 0x95, 0x12, 0x92, 0x64, 0x54, 0x29, 0x8e, 0xeb,
-	0x15, 0xec, 0xa5, 0x4f, 0xa6, 0x36, 0xd1, 0xae, 0xed, 0x1d, 0xcc, 0x3b, 0xe2, 0x2d, 0x4c, 0x2f,
-	0xc9, 0xac, 0x51, 0x9b, 0x4f, 0xd9, 0x55, 0xfb, 0x9d, 0xef, 0xb3, 0x76, 0xdf, 0x88, 0xff, 0x02,
-	0xae, 0xfa, 0xfc, 0x2f, 0xf0, 0xfa, 0x6f, 0x00, 0x00, 0x00, 0xff, 0xff, 0x38, 0x32, 0xc0, 0x2f,
-	0x1a, 0x04, 0x00, 0x00,
+	// 664 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x95, 0x4d, 0x6f, 0x13, 0x3d,
+	0x10, 0xc7, 0xf3, 0xd2, 0x6c, 0xda, 0xd9, 0x74, 0x9b, 0xba, 0xed, 0x23, 0x2b, 0x7a, 0x0e, 0x65,
+	0x11, 0x52, 0x05, 0x52, 0x85, 0xc2, 0x81, 0x0b, 0x12, 0x54, 0x7d, 0x11, 0x41, 0xad, 0x80, 0x44,
+	0x3d, 0x23, 0xd3, 0xb5, 0xb6, 0x16, 0xfb, 0xa6, 0xb5, 0x03, 0x49, 0x3e, 0x00, 0x77, 0xbe, 0x2f,
+	0x07, 0xb4, 0x33, 0x76, 0xb2, 0x41, 0x05, 0x51, 0xc4, 0x2d, 0xbf, 0x99, 0xf1, 0xdf, 0x33, 0x9e,
+	0xd9, 0x09, 0xec, 0xea, 0x79, 0x76, 0xa3, 0x65, 0xf9, 0x59, 0xdd, 0xc8, 0xe3, 0xa2, 0xcc, 0x4d,
+	0xce, 0xda, 0xa2, 0x50, 0xe1, 0x08, 0x0e, 0xc6, 0x32, 0x56, 0xda, 0xc8, 0xf2, 0x4c, 0x56, 0xce,
+	0x2b, 0xa9, 0xb5, 0x88, 0x25, 0x1b, 0xc0, 0x66, 0x84, 0x86, 0x51, 0xc4, 0x9b, 0x87, 0xcd, 0xa3,
+	0xad, 0xf1, 0x92, 0xd9, 0x3e, 0x74, 0x4c, 0xfe, 0x49, 0x66, 0xbc, 0x85, 0x0e, 0x82, 0xf0, 0x05,
+	0xf4, 0x48, 0xe2, 0x42, 0x25, 0x46, 0x96, 0x8c, 0xc1, 0x46, 0x21, 0x62, 0x89, 0xa7, 0x3b, 0x63,
+	0xfc, 0xcd, 0x38, 0x74, 0x0b, 0x59, 0xbe, 0xab, 0xcc, 0x2d, 0x34, 0x3b, 0x0c, 0x47, 0xb0, 0x77,
+	0x5d, 0x44, 0xc2, 0xc8, 0x89, 0x11, 0x66, 0xaa, 0xff, 0x24, 0x8d, 0xff, 0xc0, 0xd3, 0x18, 0x8c,
+	0x5a, 0x9b, 0x63, 0x4b, 0xe1, 0x2b, 0xe8, 0x5d, 0xe6, 0xb1, 0xca, 0x9c, 0xc6, 0x3e, 0x74, 0x92,
+	0x8a, 0xad, 0x00, 0x41, 0xa5, 0x5c, 0x08, 0xad, 0xbf, 0xe4, 0x65, 0x64, 0xeb, 0x58, 0x72, 0xf8,
+	0xbd, 0x05, 0xde, 0x95, 0x34, 0xa5, 0xba, 0xa9, 0xc2, 0x12, 0x61, 0x94, 0x99, 0x46, 0xae, 0x92,
+	0x25, 0xb3, 0xff, 0x61, 0x2b, 0xc9, 0xb3, 0x98, 0x9c, 0x54, 0xcf, 0xca, 0x50, 0x5d, 0xab, 0x0b,
+	0x29, 0x23, 0xde, 0x46, 0x0f, 0x41, 0xa5, 0x27, 0x12, 0xab, 0xb7, 0x41, 0x7a, 0x8e, 0x59, 0x00,
+	0x2d, 0x31, 0xe3, 0x1d, 0xb4, 0xb6, 0xc4, 0x0c, 0x79, 0xce, 0x3d, 0xcb, 0x73, 0xe4, 0x05, 0xef,
+	0x5a, 0x5e, 0x54, 0x1c, 0xcf, 0xf8, 0x26, 0x71, 0x8c, 0xf1, 0xf1, 0x9c, 0x6f, 0x59, 0xc6, 0xf8,
+	0x78, 0xc1, 0xc1, 0x32, 0xc6, 0xa7, 0x33, 0xee, 0x13, 0xa7, 0x18, 0x9f, 0xce, 0x79, 0xcf, 0x32,
+	0xc6, 0xa7, 0x0b, 0xbe, 0x6d, 0x79, 0xc1, 0x0e, 0xc1, 0x37, 0x32, 0x2d, 0x64, 0x29, 0xcc, 0xb4,
+	0x94, 0x3c, 0x40, 0x47, 0xdd, 0x54, 0x55, 0x73, 0x3b, 0x4d, 0x55, 0xa4, 0xcc, 0x9c, 0xef, 0x50,
+	0x35, 0x8e, 0xf1, 0x81, 0x4b, 0xa9, 0x75, 0x75, 0xb4, 0x4f, 0x3e, 0xc7, 0xd5, 0xcb, 0x19, 0x95,
+	0x4a, 0x6d, 0x44, 0x5a, 0xf0, 0x5d, 0x7a, 0xb9, 0xa5, 0x21, 0x7c, 0x03, 0xdb, 0xd8, 0xc0, 0xb1,
+	0xd4, 0x45, 0x9e, 0x69, 0xc9, 0x1e, 0x2e, 0x3b, 0x5d, 0xb5, 0x20, 0x18, 0xfa, 0xc7, 0xa2, 0x50,
+	0xc7, 0x34, 0x29, 0xae, 0xed, 0xbf, 0x98, 0xca, 0x2b, 0xe8, 0xbb, 0x01, 0xff, 0x17, 0x72, 0x1f,
+	0x20, 0xa0, 0xc1, 0xb8, 0x9f, 0xd8, 0x11, 0xec, 0xa8, 0x4c, 0xcb, 0xd2, 0xc8, 0x88, 0x8e, 0x6b,
+	0x3b, 0x2f, 0x3f, 0x9b, 0xc3, 0xb7, 0x10, 0xd8, 0xb3, 0xf7, 0xba, 0x80, 0x43, 0x37, 0xa5, 0x71,
+	0xb7, 0xf9, 0x3a, 0x0c, 0xdf, 0x83, 0x47, 0x9f, 0xe5, 0x6f, 0xbf, 0xa5, 0x27, 0x00, 0x89, 0xd0,
+	0x86, 0xb2, 0x40, 0x09, 0xdf, 0x5e, 0x64, 0xcb, 0xad, 0xb9, 0xc3, 0x12, 0x02, 0x92, 0xfc, 0x8b,
+	0x17, 0x35, 0x22, 0xb1, 0xa5, 0x13, 0xb0, 0x47, 0xd0, 0xa5, 0x2c, 0x34, 0x6f, 0x1f, 0xb6, 0x97,
+	0xd7, 0xda, 0x0b, 0x9c, 0xef, 0xf1, 0x03, 0xf0, 0x48, 0x8e, 0xf9, 0xd0, 0x9d, 0x5c, 0x9f, 0x9e,
+	0x9e, 0x4f, 0x26, 0xfd, 0x06, 0x03, 0xf0, 0x2e, 0x4e, 0x46, 0x97, 0xe7, 0x67, 0xfd, 0xe6, 0xf0,
+	0x6b, 0x13, 0xfc, 0x93, 0xa9, 0xb9, 0x9d, 0xd0, 0x9a, 0x63, 0xe7, 0x10, 0xac, 0xef, 0x36, 0x36,
+	0x40, 0xe9, 0x3b, 0x17, 0xde, 0xe0, 0x60, 0xcd, 0xe7, 0x2a, 0x0b, 0x1b, 0xec, 0x29, 0x74, 0x70,
+	0x1a, 0xd9, 0x2e, 0x46, 0xd4, 0x57, 0xcb, 0x80, 0xad, 0x4c, 0xab, 0x13, 0xc3, 0x6f, 0x4d, 0x38,
+	0x20, 0xf1, 0xd7, 0x22, 0x8b, 0x12, 0x95, 0xc5, 0x2e, 0xa5, 0x97, 0xd0, 0xab, 0x6f, 0x39, 0xc6,
+	0xf1, 0xfc, 0x1d, 0x8b, 0x6f, 0xb0, 0x57, 0x7f, 0xc1, 0x55, 0x32, 0xcf, 0xc1, 0xbf, 0x54, 0xda,
+	0x90, 0xba, 0xb6, 0x29, 0xd5, 0xd7, 0xae, 0x3d, 0xb8, 0xde, 0x9f, 0xb0, 0x31, 0x3c, 0x85, 0x6d,
+	0xea, 0x9e, 0x4b, 0x65, 0x08, 0x30, 0x91, 0x99, 0x9d, 0x3b, 0x56, 0xef, 0xb5, 0x95, 0x58, 0x9f,
+	0xf3, 0xb0, 0x71, 0xd4, 0xfc, 0xe8, 0xe1, 0x3f, 0xc7, 0xb3, 0x1f, 0x01, 0x00, 0x00, 0xff, 0xff,
+	0xbb, 0x66, 0xcc, 0x96, 0x4e, 0x06, 0x00, 0x00,
 }

@@ -25,26 +25,16 @@ func GeneratePackets(n int) []*pb.SyncPacket {
 }
 */
 
-func GeneratePacket() *pb.SyncPacket {
-	packet := &pb.SyncPacket{
-		Location:    &pb.Location{},
-		AccData:     &pb.AccelerometerData{},
-		GyroData:    &pb.GyroscopeData{},
-		MagData:     &pb.MagnetometerData{},
-		ClimateData: &pb.ClimateData{},
-	}
-	fako.Fuzz(packet.Location)
-	fako.Fuzz(packet.GyroData)
-	fako.Fuzz(packet.AccData)
-	fako.Fuzz(packet.MagData)
-	fako.Fuzz(packet.ClimateData)
-	return packet
+func GenerateMetric() *pb.Metric {
+	metric := &pb.Metric{}
+	fako.Fuzz(metric)
+	return metric
 }
 
-func GeneratePackets(n int) []*pb.SyncPacket {
-	var packets []*pb.SyncPacket
+func GenerateMetrics(n int) []*pb.Metric {
+	var metrics []*pb.Metric
 	for i := 0; i < n; i++ {
-		packets = append(packets, GeneratePacket())
+		metrics = append(metrics, GenerateMetric())
 	}
-	return packets
+	return metrics
 }

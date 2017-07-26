@@ -13,36 +13,9 @@ import (
 	"github.com/alvarowolfx/smart-street-sensor/backend/util"
 )
 
-func sendPacket(packet *pb.SyncPacket) error {
-	sendPacketURI := fmt.Sprintf("%s/send-telemetry", *serverAddr)
-	jsonStr, err := json.Marshal(packet)
-	if err != nil {
-		return err
-	}
-	resp, err := http.Post(sendPacketURI, "application/json", bytes.NewBuffer(jsonStr))
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-	io.Copy(ioutil.Discard, resp.Body)
-
-	return nil
-}
-
-func sendAllPacketsIndividually(packets []*pb.SyncPacket) error {
-	for _, packet := range packets {
-		err := sendPacket(packet)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func sendAllPacketsBatch(packets []*pb.SyncPacket) error {
-	uri := fmt.Sprintf("%s/send-batch-telemetry", *serverAddr)
-	jsonStr, err := json.Marshal(packets)
+func sendMetric(metric *pb.Metric) error {
+	uri := fmt.Sprintf("%s:%d/metrics", *serverAddr, *serverPort)
+	jsonStr, err := json.Marshal(metric)
 	if err != nil {
 		return err
 	}
@@ -56,20 +29,47 @@ func sendAllPacketsBatch(packets []*pb.SyncPacket) error {
 	return nil
 }
 
-func jsonPacketSize() int {
-	syncPacket := util.GeneratePacket()
-	jsonStr, _ := json.Marshal(syncPacket)
+func sendAllMetricsIndividually(metrics []*pb.Metric) error {
+	for _, metric := range metrics {
+		err := sendMetric(metric)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func sendAllMetricsBatch(metrics []*pb.Metric) error {
+	uri := fmt.Sprintf("%s:%d/batch-metrics", *serverAddr, *serverPort)
+	jsonStr, err := json.Marshal(metrics)
+	if err != nil {
+		return err
+	}
+	resp, err := http.Post(uri, "application/json", bytes.NewBuffer(jsonStr))
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	io.Copy(ioutil.Discard, resp.Body)
+
+	return nil
+}
+
+func jsonMetricSize() int {
+	metric := util.GenerateMetric()
+	jsonStr, _ := json.Marshal(metric)
 	return len(jsonStr)
 }
 
-func BenchmarkBatchHttpServer10(b *testing.B)     { benchmarkBatchHTTPServer(10, b) }
-func BenchmarkBatchHttpServer100(b *testing.B)    { benchmarkBatchHTTPServer(100, b) }
-func BenchmarkBatchHttpServer1000(b *testing.B)   { benchmarkBatchHTTPServer(1000, b) }
-func BenchmarkBatchHttpServer10000(b *testing.B)  { benchmarkBatchHTTPServer(10000, b) }
-func BenchmarkBatchHttpServer100000(b *testing.B) { benchmarkBatchHTTPServer(100000, b) }
+func BenchmarkBatchHTTPServer10(b *testing.B)     { benchmarkBatchHTTPServer(10, b) }
+func BenchmarkBatchHTTPServer100(b *testing.B)    { benchmarkBatchHTTPServer(100, b) }
+func BenchmarkBatchHTTPServer1000(b *testing.B)   { benchmarkBatchHTTPServer(1000, b) }
+func BenchmarkBatchHTTPServer10000(b *testing.B)  { benchmarkBatchHTTPServer(10000, b) }
+func BenchmarkBatchHTTPServer100000(b *testing.B) { benchmarkBatchHTTPServer(100000, b) }
 
 func benchmarkBatchHTTPServer(packetsCount int, b *testing.B) {
-	len := int64(jsonPacketSize() * packetsCount)
+	len := int64(jsonMetricSize() * packetsCount)
 	b.SetBytes(len)
 	//fmt.Printf("%d bytes in json\n", len)
 	b.ResetTimer()
@@ -80,23 +80,23 @@ func benchmarkBatchHTTPServer(packetsCount int, b *testing.B) {
 
 func runBatchHTTPTest(packetsCount int, b *testing.B) {
 	b.StopTimer()
-	packets := util.GeneratePackets(packetsCount)
+	metrics := util.GenerateMetrics(packetsCount)
 	b.StartTimer()
 
-	err := sendAllPacketsBatch(packets)
+	err := sendAllMetricsBatch(metrics)
 	if err != nil {
 		b.Fatalf("SendTelemetry(_) = _, %v", err)
 	}
 }
 
-func BenchmarkHttpServer10(b *testing.B)     { benchmarkHTTPServer(10, b) }
-func BenchmarkHttpServer100(b *testing.B)    { benchmarkHTTPServer(100, b) }
-func BenchmarkHttpServer1000(b *testing.B)   { benchmarkHTTPServer(1000, b) }
-func BenchmarkHttpServer10000(b *testing.B)  { benchmarkHTTPServer(10000, b) }
-func BenchmarkHttpServer100000(b *testing.B) { benchmarkHTTPServer(100000, b) }
+func BenchmarkHTTPServer10(b *testing.B)     { benchmarkHTTPServer(10, b) }
+func BenchmarkHTTPServer100(b *testing.B)    { benchmarkHTTPServer(100, b) }
+func BenchmarkHTTPServer1000(b *testing.B)   { benchmarkHTTPServer(1000, b) }
+func BenchmarkHTTPServer10000(b *testing.B)  { benchmarkHTTPServer(10000, b) }
+func BenchmarkHTTPServer100000(b *testing.B) { benchmarkHTTPServer(100000, b) }
 
 func benchmarkHTTPServer(packetsCount int, b *testing.B) {
-	len := int64(jsonPacketSize() * packetsCount)
+	len := int64(jsonMetricSize() * packetsCount)
 	b.SetBytes(len)
 	//fmt.Printf("%d bytes in json\n", len)
 	b.ResetTimer()
@@ -107,10 +107,10 @@ func benchmarkHTTPServer(packetsCount int, b *testing.B) {
 
 func runHTTPTest(packetsCount int, b *testing.B) {
 	b.StopTimer()
-	packets := util.GeneratePackets(packetsCount)
+	metrics := util.GenerateMetrics(packetsCount)
 	b.StartTimer()
 
-	err := sendAllPacketsIndividually(packets)
+	err := sendAllMetricsIndividually(metrics)
 	if err != nil {
 		b.Fatalf("SendTelemetry(_) = _, %v", err)
 	}

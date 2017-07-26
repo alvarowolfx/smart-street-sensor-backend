@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"flag"
+	"fmt"
 	"testing"
 
 	"google.golang.org/grpc"
@@ -17,7 +18,8 @@ import (
 var (
 	tls                = flag.Bool("tls", false, "Connection uses TLS if true, else plain TCP")
 	caFile             = flag.String("ca_file", "testdata/ca.pem", "The file containning the CA root cert file")
-	serverAddr         = flag.String("server_addr", "127.0.0.1:10000", "The server address in the format of host:port")
+	serverAddr         = flag.String("server_addr", "127.0.0.1", "The server address")
+	serverPort         = flag.Int("server_port", 8080, "The server port")
 	serverHostOverride = flag.String("server_host_override", "x.test.youtube.com", "The server name use to verify the hostname returned by TLS handshake")
 )
 
@@ -43,7 +45,8 @@ func connectToServer() *grpc.ClientConn {
 	} else {
 		opts = append(opts, grpc.WithInsecure())
 	}
-	conn, err := grpc.Dial(*serverAddr, opts...)
+	host := fmt.Sprintf("%s:%d", *serverAddr, *serverPort+1)
+	conn, err := grpc.Dial(host, opts...)
 	if err != nil {
 		grpclog.Fatalf("fail to dial: %v", err)
 	}
@@ -51,24 +54,24 @@ func connectToServer() *grpc.ClientConn {
 	return conn
 }
 
-func sendAllPackets(client pb.SyncServiceClient, packets []*pb.SyncPacket) (*pb.SyncResponse, error) {
-	stream, err := client.SendTelemetry(context.Background())
+func sendAllMetrics(client pb.MetricServiceClient, metrics []*pb.Metric) (*pb.MetricResponse, error) {
+	stream, err := client.SendMetric(context.Background())
 	if err != nil {
 		return nil, err
 	}
 
-	for _, packet := range packets {
-		if err := stream.Send(packet); err != nil {
+	for _, metric := range metrics {
+		if err := stream.Send(metric); err != nil {
 			return nil, err
 		}
 	}
 
-	syncResponse, err := stream.CloseAndRecv()
+	metricResponse, err := stream.CloseAndRecv()
 	if err != nil {
 		return nil, err
 	}
 
-	return syncResponse, nil
+	return metricResponse, nil
 }
 
 func BenchmarkGrpcServer10(b *testing.B)     { benchmarkGrpcServer(10, b) }
@@ -77,14 +80,14 @@ func BenchmarkGrpcServer1000(b *testing.B)   { benchmarkGrpcServer(1000, b) }
 func BenchmarkGrpcServer10000(b *testing.B)  { benchmarkGrpcServer(10000, b) }
 func BenchmarkGrpcServer100000(b *testing.B) { benchmarkGrpcServer(100000, b) }
 
-func protobufPacketSize() int {
-	syncPacket := util.GeneratePacket()
-	protoStr, _ := proto.Marshal(syncPacket)
+func protobufMetricSize() int {
+	metric := util.GenerateMetric()
+	protoStr, _ := proto.Marshal(metric)
 	return len(protoStr)
 }
 
 func benchmarkGrpcServer(packetsCount int, b *testing.B) {
-	len := int64(protobufPacketSize() * packetsCount)
+	len := int64(protobufMetricSize() * packetsCount)
 	b.SetBytes(len)
 	//fmt.Printf("%d bytes in protof\n", len)
 	b.ResetTimer()
@@ -97,10 +100,10 @@ func runGrpcTest(packetsCount int, b *testing.B) {
 	b.StopTimer()
 	conn := connectToServer()
 	defer conn.Close()
-	client := pb.NewSyncServiceClient(conn)
-	packets := util.GeneratePackets(packetsCount)
+	client := pb.NewMetricServiceClient(conn)
+	metrics := util.GenerateMetrics(packetsCount)
 	b.StartTimer()
-	_, err := sendAllPackets(client, packets)
+	_, err := sendAllMetrics(client, metrics)
 	if err != nil {
 		b.Fatalf("%v.SendTelemetry(_) = _, %v", client, err)
 	}

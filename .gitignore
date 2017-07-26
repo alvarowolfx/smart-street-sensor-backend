@@ -1,3 +1,4 @@
 *.db
+debug
 .ipynb_checkpoints
 *.out

@@ -7,6 +7,8 @@ import (
 	"net"
 	"net/http"
 
+	"github.com/NYTimes/gizmo/server/kit"
+	"github.com/Sirupsen/logrus"
 	"github.com/boltdb/bolt"
 
 	"google.golang.org/grpc"
@@ -14,6 +16,7 @@ import (
 	"google.golang.org/grpc/grpclog"
 
 	pb "github.com/alvarowolfx/smart-street-sensor/api"
+	"github.com/alvarowolfx/smart-street-sensor/backend/metrics"
 	"github.com/alvarowolfx/smart-street-sensor/backend/server"
 )
 
@@ -28,38 +31,38 @@ var (
 func startGrpcServer(db *bolt.DB) {
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
 	if err != nil {
-		grpclog.Fatalf("failed to listen: %v", err)
+		logrus.Fatalf("failed to listen: %v", err)
 	}
 	var opts []grpc.ServerOption
 	if *tls {
 		creds, err := credentials.NewServerTLSFromFile(*certFile, *keyFile)
 		if err != nil {
-			grpclog.Fatalf("Failed to generate credentials %v", err)
+			logrus.Fatalf("Failed to generate credentials %v", err)
 		}
 		opts = []grpc.ServerOption{grpc.Creds(creds)}
 	}
 	grpcServer := grpc.NewServer(opts...)
 
-	pb.RegisterSyncServiceServer(grpcServer, server.NewGrpcServer(db))
+	pb.RegisterMetricServiceServer(grpcServer, server.NewGrpcServer(db))
 
-	grpclog.Infof("GRPC Server initialized at port %d", *port)
+	logrus.Infof("GRPC Server initialized at port %d", *port)
 
 	grpcServer.Serve(lis)
 
 	grpclog.Infoln("End")
 }
 
-func startHttpServer(db *bolt.DB) {
+func startHTTPServer(db *bolt.DB) {
 
-	httpServer := server.NewHttpServer(db)
+	httpServer := server.NewHTTPServer(db)
 
-	http.HandleFunc("/send-telemetry", httpServer.SendTelemetry)
+	http.HandleFunc("/send-telemetry", httpServer.SendMetric)
 	http.HandleFunc("/send-batch-telemetry", httpServer.SendBatchTelemetry)
 
 	httpPort := *port + 1
 	portString := fmt.Sprintf(":%d", httpPort)
 
-	grpclog.Infof("HTTP Server initialized at port %d", httpPort)
+	logrus.Infof("HTTP Server initialized at port %d", httpPort)
 
 	http.ListenAndServe(portString, nil)
 }
@@ -73,9 +76,21 @@ func main() {
 	}
 	defer db.Close()
 
+	logrus.Infof("Starting servers")
 	//if *serverType == "grpc" {
-	go startGrpcServer(db)
+	//go startGrpcServer(db)
 	//} else {
-	startHttpServer(db)
+	//startHTTPServer(db)
 	//}
+
+	metricsRepository, err := metrics.NewRepository(db)
+	if err != nil {
+		log.Fatal(err)
+	}
+	svc, err := metrics.NewService(metricsRepository)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	kit.Run(svc)
 }
